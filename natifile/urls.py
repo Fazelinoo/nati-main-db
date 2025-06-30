@@ -1,22 +1,32 @@
-"""
-URL configuration for natifile project.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+
 from django.contrib import admin
 from django.urls import path
+from core.views import home, TeamLoginView
+from django.contrib.auth.views import LogoutView
+from files.views import upload_file, user_files, accessible_files, edit_file, delete_file, file_detail
+from chat.views import chat_list, chat_detail, start_new_chat, chat_messages_api, unread_message_notification_api
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', TeamLoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
+    path('upload/', upload_file, name='upload_file'),
+    path('my-files/', user_files, name='user_files'),
+    path('files/', accessible_files, name='accessible_files'),
+    path('files/<int:file_id>/edit/', edit_file, name='edit_file'),
+    path('files/<int:file_id>/', file_detail, name='file_detail'),
+    path('files/<int:file_id>/delete/', delete_file, name='delete_file'),
+    path('chats/', chat_list, name='chat_list'),
+    path('chats/new/', start_new_chat, name='start_new_chat'),
+    path('chats/<int:chat_id>/', chat_detail, name='chat_detail'),
+    path('chats/<int:chat_id>/api/messages/', chat_messages_api, name='chat_messages_api'),
+    path('notifications/api/unread/', unread_message_notification_api, name='unread_message_notification_api'),
+    path('', home, name='home'),
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

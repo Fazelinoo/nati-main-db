@@ -1,0 +1,19 @@
+{% extends 'core/base.html' %}
+{% block title %}خانه | پنل تیم{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4 mt-4">
+            <h2 class="mb-3">خوش آمدید به پنل تیم</h2>
+            <p>در این پنل می‌توانید فایل‌ها را مدیریت کنید، با اعضا چت کنید و به امکانات ویژه تیم دسترسی داشته باشید.</p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center mt-4 main-actions">
+                <a href="/upload/" class="btn btn-primary shadow">آپلود فایل جدید</a>
+                <a href="/my-files/" class="btn btn-outline-primary shadow">فایل‌های من</a>
+                <a href="/files/" class="btn btn-outline-primary shadow">فایل‌های قابل مشاهده</a>
+                <a href="/chats/" class="btn btn-outline-primary shadow">چت با اعضا</a>
+                <a href="/admin/" class="btn btn-outline-secondary shadow">پنل مدیریت</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

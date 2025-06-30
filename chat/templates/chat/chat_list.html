@@ -1,0 +1,148 @@
+{% extends 'core/base.html' %}
+{% block title %}چت‌های من{% endblock %}
+{% block content %}
+<script>
+// اگر کاربر با back/forward برگشت، صفحه را رفرش کن تا وضعیت unread درست شود
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
+        window.location.reload();
+    }
+});
+// پشتیبانی از سوییچ تم در لحظه (chat_list)
+window.addEventListener('storage', function(e) {
+    if (e.key === 'theme') {
+        if (e.newValue === 'dark') {
+            document.body.classList.add('dark');
+        } else {
+            document.body.classList.remove('dark');
+        }
+    }
+});
+// ست کردن تم هنگام ورود به صفحه
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark');
+    } else {
+        document.body.classList.remove('dark');
+    }
+});
+// آپدیت داینامیک وضعیت unread در chat_list بدون نیاز به رفرش
+function updateChatListUnread() {
+    fetch('/notifications/api/unread/', {credentials: 'same-origin'})
+        .then(r => r.json())
+        .then(data => {
+            // همه حلقه‌های unread را حذف کن
+            document.querySelectorAll('.user-tg-avatar-wrap').forEach(function(wrap) {
+                var ring = wrap.querySelector('.tg-unread-ring');
+                if (ring) ring.remove();
+            });
+            if (data.notifications && data.notifications.length > 0) {
+                data.notifications.forEach(n => {
+                    var wrap = document.querySelector('.user-tg-avatar-wrap[data-chat-id="' + n.chat_id + '"]');
+                    if (wrap && !wrap.querySelector('.tg-unread-ring')) {
+                        var span = document.createElement('span');
+                        span.className = 'tg-unread-ring';
+                        wrap.appendChild(span);
+                    }
+                });
+            }
+        });
+}
+setInterval(updateChatListUnread, 5000);
+</script>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4 mt-4">
+            <h3 class="mb-3">چت‌های شما</h3>
+            {% if chat_info %}
+                <div class="row g-3 mb-3">
+                {% for item in chat_info %}
+                    <div class="col-12">
+                        <a href="{% url 'chat_detail' item.chat.id %}" class="d-flex align-items-center justify-content-between p-2 rounded shadow-sm text-decoration-none user-tg-box position-relative">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="user-tg-avatar-wrap position-relative" data-chat-id="{{ item.chat.id }}">
+                                    <div class="user-tg-avatar">
+                                        {{ item.other.username|first|upper }}
+                                    </div>
+                                    {% if item.unread %}
+                                        <span class="tg-unread-ring"></span>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div style="font-weight:600;font-size:1.1em;">{{ item.other.username }}</div>
+                                    <div class="user-tg-role">{{ item.other.get_role_display }}</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+                </div>
+<style>
+.user-tg-box {
+    background: var(--card-bg-light);
+    transition: background 0.3s;
+}
+                .user-tg-avatar-wrap {
+                    position: relative;
+                    display: inline-block;
+                }
+                .user-tg-avatar {
+                    width:48px;height:48px;min-width:48px;min-height:48px;border-radius:50%;
+                    background:#6c63ff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5em;font-weight:600;
+                    z-index: 1;
+                }
+                .tg-unread-ring {
+                    position: absolute;
+                    top: -6px;
+                    left: -6px;
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 50%;
+                    border: 3px solid #0088cc;
+                    box-sizing: border-box;
+                    z-index: 2;
+                    animation: tg-pulse-ring 1.2s infinite;
+                }
+                @keyframes tg-pulse-ring {
+                    0% { box-shadow: 0 0 0 0 #0088cc44; }
+                    70% { box-shadow: 0 0 0 8px #0088cc00; }
+                    100% { box-shadow: 0 0 0 0 #0088cc44; }
+                }
+.user-tg-role {
+    font-size:0.95em;color:var(--muted-light);
+}
+body.dark .user-tg-box {
+    background: var(--card-bg-dark);
+}
+body.dark .user-tg-role {
+    color: var(--muted-dark);
+}
+.tg-unread-dot {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #0088cc;
+    box-shadow: 0 0 0 2px #fff;
+    border: 2px solid #fff;
+    z-index: 2;
+    animation: tg-pulse 1.2s infinite;
+}
+@keyframes tg-pulse {
+    0% { box-shadow: 0 0 0 2px #fff, 0 0 0 0 #0088cc44; }
+    70% { box-shadow: 0 0 0 2px #fff, 0 0 0 8px #0088cc00; }
+    100% { box-shadow: 0 0 0 2px #fff, 0 0 0 0 #0088cc44; }
+}
+</style>
+<a href="{% url 'start_new_chat' %}" class="btn btn-outline-primary">شروع چت جدید</a>
+            {% else %}
+                <div class="alert alert-info">شما هنوز با کسی چت نکرده‌اید.</div>
+                <a href="{% url 'start_new_chat' %}" class="btn btn-primary">Start New Chat</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
