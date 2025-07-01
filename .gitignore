@@ -1,2 +1,6 @@
 __pycache__
-mynenv
+mynvenv
+db.sqlite3
+*.sqlite3
+*.log
+/uploads
