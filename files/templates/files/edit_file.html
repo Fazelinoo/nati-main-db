@@ -2,15 +2,36 @@
 {% block title %}ویرایش فایل{% endblock %}
 {% block content %}
 <style>
+  :root {
+    --body-bg: #f7f8fa;
+    --card-bg-light: #fff;
+    --card-bg-dark: #23243a;
+    --text-dark: #b3c6ff;
+    --input-bg-light: #f3f4f8;
+    --input-bg-dark: #23243a;
+    --input-border-light: #d1d5db;
+    --input-border-dark: #444a;
+    --role-badge-bg-light: #eaf1ff;
+    --role-badge-bg-dark: #23243a;
+    --role-badge-border-light: #c7d6f3;
+    --role-badge-border-dark: #444a;
+    --role-badge-label-light: #2563eb;
+    --role-badge-label-dark: #90b4fa;
+    --primary-text: #222;
+    --primary-text-dark: #e6e6e6;
+  }
+  body, html {
+    background: var(--body-bg);
+  }
   .edit-bg {
-    background: #f7f8fa;
+    background: var(--body-bg);
     min-height: 100vh;
     padding-top: 32px;
     transition: background 0.2s;
   }
   .card {
-    background: #fff;
-    color: #222;
+    background: var(--card-bg-light);
+    color: var(--primary-text);
     border-radius: 16px;
     box-shadow: 0 2px 16px #b3c6ff22;
     border: 2.5px solid #e3e6ee;
@@ -18,24 +39,25 @@
   }
   .form-label, .form-check-label {
     font-weight: 500;
+    color: var(--primary-text);
   }
   .form-control, .form-check-input {
-    background: #f3f4f8;
-    color: #222;
+    background: var(--input-bg-light);
+    color: var(--primary-text);
     border-radius: 8px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--input-border-light);
     transition: background 0.2s, color 0.2s;
   }
   .role-badge-check {
     display: flex;
     align-items: center;
     gap: 0.5em;
-    background: #eaf1ff;
+    background: var(--role-badge-bg-light);
     border-radius: 20px;
     padding: 0.25em 0.9em 0.25em 0.7em;
     font-size: 0.98em;
     font-weight: 500;
-    border: 1px solid #c7d6f3;
+    border: 1px solid var(--role-badge-border-light);
     cursor: pointer;
     margin-bottom: 2px;
     min-width: 110px;
@@ -55,65 +77,42 @@
     vertical-align: middle;
     cursor: pointer;
     transition: accent-color 0.2s, border 0.2s;
-    background: #fff;
+    background: var(--card-bg-light);
     appearance: auto;
   }
   .role-badge-label {
-    color: #2563eb;
+    color: var(--role-badge-label-light);
     font-weight: 600;
     letter-spacing: 0.01em;
   }
-  @media (prefers-color-scheme: dark) {
-    .edit-bg {
-      background: #181a1b;
-    }
-    .card {
-      background: #23272e;
-      color: #e6e6e6;
-      box-shadow: 0 2px 16px #0004;
-      border: 2.5px solid #444a;
-    }
-    .form-control, .form-check-input {
-      background: #23272e;
-      color: #e6e6e6;
-      border: 1px solid #444a;
-    }
-    .form-label, .form-check-label {
-      color: #e6e6e6;
-    }
-    .role-badge-check {
-      background: #23272e;
-      border: 1px solid #444a;
-    }
-    .role-badge-label {
-      color: #90b4fa;
-    }
-    .role-badge-check input[type="checkbox"] {
-      accent-color: #90b4fa;
-      background: #23272e;
-      border: 2px solid #90b4fa;
-    }
+  html.dark .edit-bg, body.dark .edit-bg {
+    background: var(--card-bg-dark);
   }
-  body[data-bs-theme="dark"] .edit-bg {
-    background: #181a1b !important;
-  }
-  body[data-bs-theme="dark"] .card {
-    background: #23272e !important;
-    color: #e6e6e6 !important;
-    border: 2.5px solid #444a !important;
+  html.dark .card, body.dark .card {
+    background: var(--card-bg-dark);
+    color: var(--primary-text-dark);
+    border: 2.5px solid #444a;
     box-shadow: 0 2px 16px #0004;
   }
-  body[data-bs-theme="dark"] .role-badge-check {
-    background: #23272e !important;
-    border: 1px solid #444a !important;
+  html.dark .form-label, html.dark .form-check-label, body.dark .form-label, body.dark .form-check-label {
+    color: var(--primary-text-dark);
   }
-  body[data-bs-theme="dark"] .role-badge-label {
-    color: #90b4fa !important;
+  html.dark .form-control, html.dark .form-check-input, body.dark .form-control, body.dark .form-check-input {
+    background: var(--input-bg-dark);
+    color: var(--primary-text-dark);
+    border: 1px solid var(--input-border-dark);
   }
-  body[data-bs-theme="dark"] .role-badge-check input[type="checkbox"] {
-    accent-color: #90b4fa !important;
-    background: #23272e !important;
-    border: 2px solid #90b4fa !important;
+  html.dark .role-badge-check, body.dark .role-badge-check {
+    background: var(--role-badge-bg-dark);
+    border: 1px solid var(--role-badge-border-dark);
+  }
+  html.dark .role-badge-label, body.dark .role-badge-label {
+    color: var(--role-badge-label-dark);
+  }
+  html.dark .role-badge-check input[type="checkbox"], body.dark .role-badge-check input[type="checkbox"] {
+    accent-color: #90b4fa;
+    background: var(--card-bg-dark);
+    border: 2px solid #90b4fa;
   }
 </style>
 <div class="edit-bg">

@@ -9,7 +9,9 @@ class Role(models.TextChoices):
 
 
 class CustomUser(AbstractUser):
+
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.ADMIN)
+    last_seen = models.DateTimeField(null=True, blank=True)
     # می‌توانید فیلدهای بیشتری اضافه کنید
 
     def __str__(self):

@@ -283,7 +283,16 @@
                     <button id="notifBtn" class="btn btn-outline-secondary position-relative" onclick="toggleNotifDropdown(event)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7v2.09c0 .32.15.62.41.8l1.59 1.06a1 1 0 0 1-.59 1.85H3.59a1 1 0 0 1-.59-1.85l1.59-1.06A1 1 0 0 0 5 11.09V9a7 7 0 0 1 7-7zm0 18a3 3 0 0 0 3-3H9a3 3 0 0 0 3 3z"/></svg>
                         {% if has_unread_message or has_new_file %}
-                        <span id="notifDot" class="position-absolute top-0 start-0 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                        <span id="notifDot" class="notif-dot-blink position-absolute top-0 start-0 translate-middle p-1 bg-danger border border-light rounded-circle" style="display:none;"></span>
+<style>
+@keyframes notif-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+.notif-dot-blink {
+  animation: notif-blink 1s infinite;
+}
+</style>
                         {% endif %}
                     </button>
                     <div id="notifDropdown" class="card shadow p-3 position-fixed end-0 mt-2 notif-dropdown-fix" style="min-width:220px; display:none; z-index:2147483647; right:24px; top:70px; left:auto; box-shadow: 0 12px 48px #23243a99, 0 0 0 4px #6a8dff33;">
@@ -296,7 +305,19 @@
   right: 24px !important;
   top: 70px !important;
   left: auto !important;
-  box-shadow: 0 12px 48px #23243a99, 0 0 0 4px #6a8dff33 !important;
+  background: var(--card-bg-light) !important;
+  color: var(--text-light) !important;
+  box-shadow: 0 12px 48px #bfc7d680, 0 0 0 4px #6a8dff33 !important;
+  border: 1.5px solid var(--border-light) !important;
+  transition: background 0.4s, color 0.4s, border 0.4s;
+}
+.dark .notif-dropdown-fix, html.dark .notif-dropdown-fix {
+  background: var(--card-bg-dark) !important;
+  color: var(--text-dark) !important;
+  box-shadow: 0 12px 48px #0008, 0 0 0 4px #5edfff33 !important;
+  border: 1.5px solid var(--border-dark) !important;
+}
+.notif-dropdown-fix {
   pointer-events: auto !important;
 }
 </style>
@@ -461,7 +482,14 @@ function fetchNotifications() {
             }
             container.innerHTML = html || '<div class="text-muted">اعلان جدیدی ندارید.</div>';
             // نقطه قرمز
-            document.getElementById('notifDot')?.classList.toggle('d-none', !hasNotif);
+            const notifDot = document.getElementById('notifDot');
+            if (notifDot) {
+                if (hasNotif) {
+                    notifDot.style.display = 'block';
+                } else {
+                    notifDot.style.display = 'none';
+                }
+            }
 
             // فقط یکبار در هر اعلان جدید تا زمانی که کاربر آن را ببیند
             if (newNotif && !window._notifDropdownShown) {
@@ -472,7 +500,7 @@ function fetchNotifications() {
                     setTimeout(() => {
                         dropdown.style.display = 'none';
                         window._notifDropdownShown = false;
-                    }, 5000);
+                    }, 7000);
                 }
             }
         });

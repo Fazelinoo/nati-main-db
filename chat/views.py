@@ -52,16 +52,43 @@ def chat_messages_api(request, chat_id):
 
 @login_required
 def chat_list(request):
+    from django.utils import timezone
+    from datetime import timedelta
+    import pytz
+    import calendar
     chats = Chat.objects.filter(participants=request.user)
     chat_info = []
+    tehran = pytz.timezone('Asia/Tehran')
+    now = timezone.now().astimezone(tehran)
+    weekdays = list(calendar.day_name)
     for chat in chats:
-        # اگر هیچ پیام خوانده‌نشده‌ای از طرف مقابل وجود دارد، unread = True
         unread = chat.messages.exclude(sender=request.user).exclude(read_by=request.user).exists()
         other = chat.participants.exclude(id=request.user.id).first()
+        last_seen = getattr(other, 'last_seen', None)
+        online_status = ''
+        if last_seen:
+            last_seen_tehran = last_seen.astimezone(tehran)
+            delta = now - last_seen_tehran
+            if delta < timedelta(minutes=3):
+                online_status = 'Online'
+            else:
+                # Format: Today, Yesterday, Weekday, or time only
+                if last_seen_tehran.date() == now.date():
+                    online_status = f"Last seen: Today, {last_seen_tehran.strftime('%H:%M')}"
+                elif (now.date() - last_seen_tehran.date()).days == 1:
+                    online_status = f"Last seen: Yesterday, {last_seen_tehran.strftime('%H:%M')}"
+                elif (now - last_seen_tehran) < timedelta(days=7):
+                    weekday = weekdays[last_seen_tehran.weekday()]
+                    online_status = f"Last seen: {weekday}, {last_seen_tehran.strftime('%H:%M')}"
+                else:
+                    online_status = f"Last seen: {last_seen_tehran.strftime('%Y-%m-%d %H:%M')}"
+        else:
+            online_status = 'Unknown'
         chat_info.append({
             'chat': chat,
             'other': other,
-            'unread': unread
+            'unread': unread,
+            'online_status': online_status
         })
     return render(request, 'chat/chat_list.html', {'chat_info': chat_info})
 
