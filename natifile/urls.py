@@ -13,9 +13,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', TeamLoginView.as_view(), name='login'),
+    path('login/', TeamLoginView.as_view(), name='login'), # hanoozam ye bug to dark/light hast
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
-    path('upload/', upload_file, name='upload_file'),
+    path('upload/', upload_file, name='upload_file'), # path fix shod
     path('my-files/', user_files, name='user_files'),
     path('files/', accessible_files, name='accessible_files'),
     path('files/<int:file_id>/edit/', edit_file, name='edit_file'),
@@ -27,11 +27,11 @@ urlpatterns = [
     path('chats/<int:chat_id>/api/messages/', chat_messages_api, name='chat_messages_api'),
     path('notifications/api/unread/', unread_message_notification_api, name='unread_message_notification_api'),
     path('heartbeat/', heartbeat, name='heartbeat'),
-    path('admin2/users/', admin_user_list, name='admin_user_list'),
-    path('admin2/users/<int:user_id>/files/', admin_user_files, name='admin_user_files'),
+    path('admin2/users/', admin_user_list, name='admin_user_list'), # na tamom
+    path('admin2/users/<int:user_id>/files/', admin_user_files, name='admin_user_files'), # na tamom
     path('', home, name='home'),
 ]
 
-# Serve media files during development
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

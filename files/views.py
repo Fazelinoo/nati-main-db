@@ -61,13 +61,12 @@ def upload_file(request):
 @login_required
 def user_files(request):
     if request.user.is_superuser:
-        # سوپر یوزر: همه فایل‌های پابلیک + فایل‌هایی که خودش آپلود کرده (جدیدترین اول)
+        # jadid tarin file nemiyavord fix shod
         files = File.objects.filter(
             Q(access_level='public') |
             Q(uploader=request.user)
         ).distinct().order_by('-uploaded_at')
     else:
-        # کاربر عادی: فقط فایل‌هایی که خودش آپلود کرده (جدیدترین اول)
         files = File.objects.filter(uploader=request.user).order_by('-uploaded_at')
     return render(request, 'files/user_files.html', {'files': files})
 

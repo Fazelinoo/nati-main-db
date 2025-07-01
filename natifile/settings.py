@@ -43,11 +43,11 @@ INSTALLED_APPS = [
     'core',
 ]
 
-# ریدایرکت لاگین به صفحه لاگین سفارشی
+
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
-# استفاده از مدل کاربر سفارشی
+
 AUTH_USER_MODEL = 'users.CustomUser'
 
 MIDDLEWARE = [

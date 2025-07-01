@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fa">
 <script>
-// Set theme (dark/light) before page render to prevent flicker
+//  tanzim kardan dark mod va light mode
 (function() {
     try {
         var html = document.documentElement;
@@ -16,7 +16,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}پنل تیم{% endblock %}</title>
+    <title>{% block title %}Nati{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <style>
         :root {
@@ -114,7 +114,7 @@
         .table-striped > tbody > tr:nth-of-type(even) {
             background-color: #e3e6ed;
         }
-        /* دارک مود */
+
         html.dark body,
         body.dark {
             background: var(--main-bg-dark);
@@ -185,18 +185,18 @@
         .dark .table-striped > tbody > tr:nth-of-type(even) {
             background-color: #181a20;
         }
-        /* انیمیشن دکمه‌ها */
+
         .btn, .form-control, .form-select {
             transition: box-shadow 0.3s, background 0.3s, color 0.3s, border 0.3s;
         }
         .btn:active {
             transform: scale(0.97);
         }
-        /* انیمیشن کارت‌ها */
+
         .card {
             animation: fadeInUp 0.7s cubic-bezier(.4,2,.6,1);
         }
-        /* انیمیشن دکمه‌های صفحه اصلی */
+
         .main-actions .btn {
             animation: fadeInUp 0.7s cubic-bezier(.4,2,.6,1);
         }
@@ -298,7 +298,7 @@
                     <div id="notifDropdown" class="card shadow p-3 position-fixed end-0 mt-2 notif-dropdown-fix" style="min-width:220px; display:none; z-index:2147483647; right:24px; top:70px; left:auto; box-shadow: 0 12px 48px #23243a99, 0 0 0 4px #6a8dff33;">
 </footer>
 <style>
-/* Force notif dropdown always on top of everything */
+/* fix bug ke safhe notif zire baghie bakhs ha miraft */
 .notif-dropdown-fix {
   z-index: 2147483647 !important;
   position: fixed !important;
@@ -370,7 +370,8 @@
     </div>
 </footer>
 <script>
-// سینک فوتر با دارک مود
+// fix bug ke footer ba taghir light mode avaz nemishod
+// hanoz moshkel dare ___________________________________________________________________________________________________________________
 function syncFooterTheme() {
     const html = document.documentElement;
     const footer = document.querySelector('footer.footer');
@@ -385,6 +386,7 @@ function syncFooterTheme() {
         footerText.style.color = '#888';
     }
 }
+// hanoz moshkel dare ___________________________________________________________________________
 document.addEventListener('DOMContentLoaded', function() {
     syncFooterTheme();
     const switchInput = document.getElementById('theme-toggle');
@@ -417,12 +419,12 @@ document.addEventListener('click', function(e) {
         const switchInput = document.getElementById('theme-toggle');
         const body = document.body;
         const html = document.documentElement;
-        // اعلان
+ 
         const notifDot = document.getElementById('notifDot');
         if (notifDot && localStorage.getItem('notif_seen') === '1') {
             notifDot.style.display = 'none';
         }
-        // Load theme from localStorage (set both html and body)
+        // fix bug ke bayad refresh mikardi | az ghabl load dark va light moshakhas mishe
         if (localStorage.getItem('theme') === 'dark') {
             body.classList.add('dark');
             html.classList.add('dark');
@@ -433,12 +435,13 @@ document.addEventListener('click', function(e) {
             if (switchInput) switchInput.checked = false;
         }
         if (switchInput) {
-            // رفع مشکل کلیک روی دایره
+            //  bug dareeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee _________
             switchInput.parentElement.addEventListener('click', function(e) {
                 if (e.target === switchInput) return;
                 switchInput.checked = !switchInput.checked;
                 switchInput.dispatchEvent(new Event('change'));
             });
+            //  ____________________________________________________________________________________
             switchInput.addEventListener('change', function() {
                 if (this.checked) {
                     body.classList.add('dark');
@@ -454,7 +457,7 @@ document.addEventListener('click', function(e) {
     });
 </script>
 <script>
-// اعلان پیام جدید با صدا و حذف هوشمند
+// cancel shod 
 let shownNotifs = {};
 function fetchNotifications() {
     fetch('/notifications/api/unread/', {credentials: 'same-origin'})
@@ -465,7 +468,8 @@ function fetchNotifications() {
             let hasNotif = false;
             let newNotif = false;
             if (data.notifications && data.notifications.length > 0) {
-                // فقط یکبار برای هر اعلان جدید تا زمانی که کاربر آن را ببیند
+                // fix bug ke be ezaye har payam yek notif miomad 
+                // hala kolan yek payam miad ta seen nashode payam jadid nemiad
                 let unseen = JSON.parse(localStorage.getItem('notif_seen_ids') || '{}');
                 data.notifications.forEach(n => {
                     html += `<div class=\"alert alert-info py-2 mb-2 notif-alert\" data-sender=\"${n.sender_id}\">${n.sender_fullname} به شما پیام داد</div>`;
@@ -477,11 +481,11 @@ function fetchNotifications() {
                 });
                 localStorage.setItem('notif_seen_ids', JSON.stringify(unseen));
             } else {
-                // اگر هیچ اعلانی نبود، لیست را پاک کن
+
                 localStorage.removeItem('notif_seen_ids');
             }
             container.innerHTML = html || '<div class="text-muted">اعلان جدیدی ندارید.</div>';
-            // نقطه قرمز
+
             const notifDot = document.getElementById('notifDot');
             if (notifDot) {
                 if (hasNotif) {
@@ -491,7 +495,7 @@ function fetchNotifications() {
                 }
             }
 
-            // فقط یکبار در هر اعلان جدید تا زمانی که کاربر آن را ببیند
+ 
             if (newNotif && !window._notifDropdownShown) {
                 window._notifDropdownShown = true;
                 const dropdown = document.getElementById('notifDropdown');
@@ -507,7 +511,7 @@ function fetchNotifications() {
 }
 setInterval(fetchNotifications, 5000);
 fetchNotifications();
-// حذف اعلان وقتی پیام سین شد (در صفحه چت)
+//
 window.removeNotifForSender = function(sender_id) {
     shownNotifs[sender_id] = false;
     fetchNotifications();

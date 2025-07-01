@@ -1,6 +1,8 @@
 {% extends 'core/base.html' %}
 {% block title %}ورود به پنل تیم{% endblock %}
-{% block extra_head %}
+{% block extra_head %}\
+<!-- buggggg dare -->
+ <!-- roye dark mode safhe poshti dark nemishe va dynamic nist -->
 <style>
     body {
         background: linear-gradient(120deg, #e3e6ed 60%, #f8fafc 100%);
@@ -41,21 +43,21 @@
 {% endblock %}
 {% block content %}
 <div class="login-card">
-    <div class="login-title">ورود به پنل تیم</div>
+    <div class="login-title">Login</div>
     <form method="post" novalidate>
         {% csrf_token %}
         {% if form.non_field_errors %}
             <div class="alert alert-danger">{{ form.non_field_errors }}</div>
         {% endif %}
         <div class="mb-3">
-            <label for="id_username" class="form-label">نام کاربری</label>
+            <label for="id_username" class="form-label">User Name</label>
             <input type="text" name="username" class="form-control" id="id_username" required autofocus>
         </div>
         <div class="mb-3">
-            <label for="id_password" class="form-label">رمز عبور</label>
+            <label for="id_password" class="form-label">Password</label>
             <input type="password" name="password" class="form-control" id="id_password" required>
         </div>
-        <button type="submit" class="btn btn-login w-100">ورود</button>
+        <button type="submit" class="btn btn-login w-100">Login</button>
     </form>
 </div>
 {% endblock %}
