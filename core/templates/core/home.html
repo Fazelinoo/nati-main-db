@@ -11,10 +11,11 @@
                 <a href="/my-files/" class="btn btn-outline-primary shadow">فایل‌های من</a>
                 <a href="/files/" class="btn btn-outline-primary shadow">فایل‌های قابل مشاهده</a>
                 <a href="/chats/" class="btn btn-outline-primary shadow">چت با اعضا</a>
-                <!-- bayad faghat super user in button ro bebine -->
-                <a href="/admin/" class="btn btn-outline-secondary shadow">پنل مدیریت</a>
-                <!-- fix nashod -->
-                 <!-- :( -->
+                {% if request.user.is_staff %}
+                    <a href="/admin/" class="btn btn-outline-secondary shadow">پنل مدیریت</a>
+                    <a href="/admin2/users" class="btn btn-outline-secondary shadow">پنل مدیر</a>
+                {% endif %}
+
             </div>
         </div>
     </div>
