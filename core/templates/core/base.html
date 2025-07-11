@@ -274,9 +274,11 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body dir="rtl">
+
 <nav class="navbar navbar-expand-lg mb-4">
     <div class="container d-flex align-items-center justify-content-between">
         <a class="navbar-brand fw-bold" href="/">Nati</a>
+        <!-- <a href="{% url 'project_list' %}" class="btn btn-outline-primary ms-2">پروژه‌ها و تسک‌ها</a> -->
         <div class="d-flex align-items-center gap-3 ms-auto">
             {% if user.is_authenticated %}
                 <div class="position-relative me-2">
@@ -295,7 +297,9 @@
 </style>
                         {% endif %}
                     </button>
+</footer>
                     <div id="notifDropdown" class="card shadow p-3 position-fixed end-0 mt-2 notif-dropdown-fix" style="min-width:220px; display:none; z-index:2147483647; right:24px; top:70px; left:auto; box-shadow: 0 12px 48px #23243a99, 0 0 0 4px #6a8dff33;">
+                        <a href="{% url 'user_tasks' %}" class="btn btn-outline-info w-100 mb-2">تسک‌های من</a>
 </footer>
 <style>
 /* fix bug ke safhe notif zire baghie bakhs ha miraft */
@@ -361,6 +365,16 @@
     </div>
 </nav>
 <div class="container">
+    {% if messages %}
+      <div class="mt-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="بستن"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
     {% block content %}{% endblock %}
 </div>
 <footer class="footer fixed-bottom"
@@ -509,7 +523,7 @@ function fetchNotifications() {
             }
         });
 }
-setInterval(fetchNotifications, 5000);
+setInterval(fetchNotifications, 7000);
 fetchNotifications();
 //
 window.removeNotifForSender = function(sender_id) {

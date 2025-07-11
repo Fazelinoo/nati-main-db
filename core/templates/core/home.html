@@ -11,11 +11,15 @@
                 <a href="/my-files/" class="btn btn-outline-primary shadow">فایل‌های من</a>
                 <a href="/files/" class="btn btn-outline-primary shadow">فایل‌های قابل مشاهده</a>
                 <a href="/chats/" class="btn btn-outline-primary shadow">چت با اعضا</a>
+                <a href="{% url 'project_list' %}" class="btn btn-outline-success shadow">پروژه‌ها و تسک‌ها</a>
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'user_projects' %}" class="btn btn-outline-info shadow">تسک‌های من</a>
+                <a href="{% url 'user_reports' %}" class="btn btn-outline-warning shadow">گزارش‌های من</a>
+                {% endif %}
                 {% if request.user.is_staff %}
                     <a href="/admin/" class="btn btn-outline-secondary shadow">پنل مدیریت</a>
-                    <a href="/admin2/users" class="btn btn-outline-secondary shadow">پنل مدیر</a>
+                    <a href="/admin2" class="btn btn-outline-secondary shadow">پنل مدیر</a>
                 {% endif %}
-
             </div>
         </div>
     </div>

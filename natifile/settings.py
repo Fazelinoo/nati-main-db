@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'files',
     'chat',
     'core',
+    'tasks',
 ]
 
 
