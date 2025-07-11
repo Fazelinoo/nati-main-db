@@ -183,10 +183,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('telegram-bg');
 });
-// حذف هرگونه تغییر تم در این صفحه (فقط telegram-bg)
+
 window.addEventListener('storage', function(e) {
     if (e.key === 'theme') {
-        // فقط reload کن تا base.html تم را ست کند
+
         window.location.reload();
     }
 });
@@ -213,7 +213,7 @@ window.addEventListener('storage', function(e) {
                 {% endfor %}
             </div>
             <script>
-            // تابع واحد اسکرول به پایین
+
             function scrollToBottom() {
                 var box = document.getElementById('messages-box');
                 if (box) {
@@ -221,13 +221,12 @@ window.addEventListener('storage', function(e) {
                 }
             }
 
-            // اسکرول بعد از لود اولیه
             document.addEventListener('DOMContentLoaded', function() {
                 scrollToBottom();
-                setTimeout(scrollToBottom, 200); // اطمینان از رندر کامل
+                setTimeout(scrollToBottom, 200); 
             });
 
-            // AJAX Polling برای دریافت پیام جدید
+
             var lastMsgCount = Number('{{ messages|length|default_if_none:0 }}');
             function fetchMessages() {
                 fetch("{% url 'chat_messages_api' chat.id %}")
@@ -253,12 +252,12 @@ window.addEventListener('storage', function(e) {
             }
             setInterval(fetchMessages, 3000);
 
-            // اسکرول بعد از ارسال پیام
+
             document.getElementById('chat-form').addEventListener('submit', function() {
                 setTimeout(scrollToBottom, 300);
             });
 
-            // راهکار قطعی: MutationObserver فقط برای اضافه شدن پیام جدید (در صورت نیاز)
+            
             var box = document.getElementById('messages-box');
             if (box) {
                 var observer = new MutationObserver(function() {
@@ -273,7 +272,7 @@ window.addEventListener('storage', function(e) {
                 <button type="submit" title="Send"><span style="font-size:1.3em;">&#10148;</span></button>
             </form>
             <script>
-            // اسکرول به پایین بعد از ارسال پیام
+
             document.getElementById('chat-form').addEventListener('submit', function() {
                 setTimeout(function() {
                     var box = document.getElementById('messages-box');
@@ -292,10 +291,10 @@ if (otherId && window.removeNotifForSender) {
 }
 </script>
 <script>
-// پاک کردن کلاس پس‌زمینه تلگرام و دارک مود هنگام ترک صفحه
+
 window.addEventListener('beforeunload', function() {
     document.body.classList.remove('telegram-bg');
-    // اگر در صفحات دیگر دارک/لایت مود فعال است، فقط telegram-bg را حذف کن
+  
 });
 </script>
 {% endblock %}

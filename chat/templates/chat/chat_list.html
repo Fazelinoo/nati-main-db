@@ -2,17 +2,17 @@
 {% block title %}چت‌های من{% endblock %}
 {% block content %}
 <script>
-// Heartbeat: هر ۳۰ ثانیه یک درخواست به سرور برای آپدیت آنلاین بودن
+
 setInterval(function() {
     fetch('/heartbeat/', {credentials: 'same-origin'});
 }, 30000);
-// اگر کاربر با back/forward برگشت، صفحه را رفرش کن تا وضعیت unread درست شود
+
 window.addEventListener('pageshow', function(event) {
     if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation")[0]?.type === "back_forward")) {
         window.location.reload();
     }
 });
-// پشتیبانی از سوییچ تم در لحظه (chat_list)
+
 window.addEventListener('storage', function(e) {
     if (e.key === 'theme') {
         if (e.newValue === 'dark') {
@@ -22,7 +22,7 @@ window.addEventListener('storage', function(e) {
         }
     }
 });
-// ست کردن تم هنگام ورود به صفحه
+
 document.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem('theme') === 'dark') {
         document.body.classList.add('dark');
@@ -30,12 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.remove('dark');
     }
 });
-// آپدیت داینامیک وضعیت unread در chat_list بدون نیاز به رفرش
+
 function updateChatListUnread() {
     fetch('/notifications/api/unread/', {credentials: 'same-origin'})
         .then(r => r.json())
         .then(data => {
-            // همه حلقه‌های unread را حذف کن
+
             document.querySelectorAll('.user-tg-avatar-wrap').forEach(function(wrap) {
                 var ring = wrap.querySelector('.tg-unread-ring');
                 if (ring) ring.remove();
