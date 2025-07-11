@@ -3,9 +3,40 @@
 {% block title %}تسک‌های من{% endblock %}
 {% block content %}
 <div class="container mt-4">
-    <h2>تسک‌های من</h2>
+    <h2 class="mb-4">تسک‌های من</h2>
     <a href="{% url 'upload_weekly_report' %}" class="btn btn-primary mb-3">آپلود گزارش هفتگی</a>
-    <div class="row g-3">
+
+
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <h4 class="mb-2">تسک‌های مستقل (بدون پروژه)</h4>
+        </div>
+        {% for task in project_tasks %}
+        <div class="col-12">
+            <div class="card p-3 mb-2 border-warning">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5>{{ task.title }}</h5>
+                        <p>{{ task.description }}</p>
+                        <small>از {{ task.start_date|to_jalali }} تا {{ task.due_date|to_jalali }}</small>
+                        <br>
+                        <span class="badge {% if task.is_completed %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                            {% if task.is_completed %}انجام شده{% else %}در انتظار انجام{% endif %}
+                        </span>
+                    </div>
+                    <a href="{% url 'task_detail' task.id %}" class="btn btn-info">جزئیات</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12"><div class="alert alert-info">تسک مستقلی برای شما ثبت نشده است.</div></div>
+        {% endfor %}
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <h4 class="mb-2">تسک‌های پروژه‌ای</h4>
+        </div>
         {% for task in tasks %}
         <div class="col-12">
             <div class="card p-3 mb-2 {% if not task.is_completed and task.due_date < today %}border-danger{% endif %}">
@@ -19,30 +50,32 @@
                             {% if task.is_completed %}انجام شده{% else %}در انتظار انجام{% endif %}
                         </span>
                     </div>
-                    {% if not task.is_completed %}
-                    <form method="post" action="{% url 'complete_task' task.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success">تکمیل تسک</button>
-                    </form>
-                    {% endif %}
+                    <a href="{% url 'task_detail' task.id %}" class="btn btn-info">جزئیات</a>
                 </div>
             </div>
         </div>
         {% empty %}
-        <div class="col-12"><div class="alert alert-info">تسکی برای شما ثبت نشده است.</div></div>
+        <div class="col-12"><div class="alert alert-info">تسک پروژه‌ای برای شما ثبت نشده است.</div></div>
         {% endfor %}
     </div>
-    <h3 class="mt-4">گزارش‌های هفتگی</h3>
-    <ul class="list-group">
-        {% for report in reports %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            هفته: {{ report.week_start|to_jalali }} تا {{ report.week_end|to_jalali }}
-            <a href="{{ report.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">دانلود</a>
-        </li>
-        {% empty %}
-        <li class="list-group-item">گزارشی ثبت نشده است.</li>
-        {% endfor %}
-    </ul>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <h4 class="mb-2">گزارش‌های هفتگی</h4>
+        </div>
+        <div class="col-12">
+            <ul class="list-group">
+                {% for report in reports %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    هفته: {{ report.week_start|to_jalali }} تا {{ report.week_end|to_jalali }}
+                    <a href="{{ report.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">دانلود</a>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-center">گزارشی ثبت نشده است.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
     <h3 class="mt-4">پروژه‌هایی که نقش شما در آن‌ها وجود دارد</h3>
     <div class="row g-3">
         {% for project in projects_with_role %}

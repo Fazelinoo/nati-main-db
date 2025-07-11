@@ -1,3 +1,13 @@
+from django.contrib import messages
+
+from django.contrib.auth.decorators import user_passes_test
+from core.views_admin import is_admin
+@user_passes_test(is_admin)
+def delete_report(request, report_id):
+    report = get_object_or_404(WeeklyReport, id=report_id)
+    report.delete()
+    messages.success(request, 'گزارش با موفقیت حذف شد.')
+    return redirect('admin2_reports')
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, get_object_or_404, redirect
 from core.views_admin import is_admin
@@ -31,7 +41,7 @@ def admin2_tasks(request):
 
 @user_passes_test(is_admin)
 def admin2_reports(request):
-    reports = WeeklyReport.objects.select_related('user', 'project').all().order_by('-week_start')
+    reports = WeeklyReport.objects.select_related('user', 'project').all().order_by('-week_start', '-submitted_at')
     return render(request, 'core/admin2_reports.html', {'reports': reports})
 
 @user_passes_test(is_admin)

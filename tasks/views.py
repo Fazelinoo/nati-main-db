@@ -13,9 +13,30 @@ def user_projects(request):
     user = request.user
 
     projects = Project.objects.filter(
-        Q(tasks__users=user) | Q(project_roles__user=user)
+        (Q(tasks__users=user) | Q(project_roles__user=user)) & ~Q(status='archived')
     ).distinct()
-    return render(request, 'tasks/user_projects.html', {'projects': projects})
+    
+    projects = projects.filter(tasks__is_completed=False).distinct()
+
+    from django.utils import timezone
+    now = timezone.now()
+
+    if is_admin(user):
+        independent_tasks_doing = Task.objects.filter(project__isnull=True, is_completed=False).order_by('-created_at')
+        independent_tasks_done = Task.objects.filter(project__isnull=True, is_completed=True).order_by('-created_at')
+    else:
+        independent_tasks_doing = Task.objects.filter(users=user, project__isnull=True, is_completed=False).order_by('-created_at')
+        independent_tasks_done = Task.objects.filter(
+            users=user,
+            project__isnull=True,
+            is_completed=True,
+            created_at__gte=now - timezone.timedelta(days=1)
+        ).order_by('-created_at')
+    return render(request, 'tasks/user_projects.html', {
+        'projects': projects,
+        'independent_tasks_doing': independent_tasks_doing,
+        'independent_tasks_done': independent_tasks_done,
+    })
 
 @login_required
 def user_project_tasks(request, project_id):
@@ -90,10 +111,11 @@ def assign_task(request, user_id):
     if request.method == 'POST':
         title = request.POST.get('title')
         description = request.POST.get('description')
-        start_date = request.POST.get('start_date')
-        due_date = request.POST.get('due_date')
+        start_date = persian_to_gregorian(request.POST.get('start_date'))
+        due_date = persian_to_gregorian(request.POST.get('due_date'))
         if title and due_date:
-            Task.objects.create(user=user, title=title, description=description or '', start_date=start_date or timezone.now().date(), due_date=due_date)
+            task = Task.objects.create(title=title, description=description or '', start_date=start_date or timezone.now().date(), due_date=due_date, status='doing')
+            task.users.add(user)
             return redirect('/admin2/users/')
     return render(request, 'tasks/assign_task.html', {'user': user})
 
@@ -213,16 +235,22 @@ def add_task_to_project(request, project_id):
 def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     
-    user_roles = task.project.project_roles.values_list('role', flat=True)
-    can_edit = (request.user in task.users.all()) and (getattr(request.user, 'role', None) in user_roles)
+    if task.project:
+        user_roles = task.project.project_roles.values_list('role', flat=True)
+    else:
+        user_roles = []
+    can_edit = (request.user in task.users.all()) or is_admin(request.user)
     if request.method == 'POST':
         if can_edit:
             if task.status == 'doing':
                 task.status = 'done'
+                task.is_completed = True
             elif task.status == 'done':
                 task.status = 'doing'
+                task.is_completed = False
             elif task.status == 'late':
                 task.status = 'doing'
+                task.is_completed = False
             task.save()
             messages.success(request, 'وضعیت تسک با موفقیت تغییر کرد.')
         else:
