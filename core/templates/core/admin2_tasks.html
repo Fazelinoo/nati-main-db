@@ -28,7 +28,7 @@
                     <td><span class="badge bg-{% if task.status == 'done' %}success{% elif task.status == 'doing' %}warning text-dark{% elif task.status == 'late' %}danger{% else %}secondary{% endif %}">{{ task.get_status_display }}</span></td>
                     <td>
                         <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-outline-info">جزئیات</a>
-                        <!-- حذف تسک فقط از پنل ادمین اصلی یا با تایید ویژه -->
+
                     </td>
                 </tr>
                 {% empty %}

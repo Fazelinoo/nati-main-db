@@ -13,18 +13,18 @@ class WeeklyReportForm(forms.ModelForm):
                 Q(tasks__users=user) | Q(project_roles__user=user)
             ).distinct()
         self.fields['file'].required = False
-        # تاریخ شمسی به میلادی برای week_start و week_end
+
         import re
         for field in ['week_start', 'week_end']:
             val = self.data.get(field)
             if val:
                 import jdatetime
                 try:
-                    # پشتیبانی از 1404/05/22 یا 1404-05-22
+
                     parts = re.split(r'[-/]', val)
                     parts = [int(x) for x in parts]
                     if parts[0] > 1500:
-                        # میلادی است
+
                         continue
                     gdate = jdatetime.date(parts[0], parts[1], parts[2]).togregorian()
                     self.data = self.data.copy()
@@ -46,7 +46,7 @@ class ProjectForm(forms.ModelForm):
         instance = super().save(commit=commit)
         if commit:
             instance.save()
-            # حذف نقش‌های قبلی و افزودن جدید
+
             ProjectRole.objects.filter(project=instance).delete()
             for role in self.cleaned_data['roles']:
                 ProjectRole.objects.create(project=instance, role=role)
@@ -62,7 +62,7 @@ class TaskForm(forms.ModelForm):
         project = kwargs.pop('project', None)
         super().__init__(*args, **kwargs)
         if project:
-            # فقط کاربرانی که نقش‌شان در این پروژه وجود دارد
+
             from users.models import CustomUser
             roles = ProjectRole.objects.filter(project=project).values_list('role', flat=True)
             self.fields['users'].queryset = CustomUser.objects.filter(role__in=roles)
@@ -71,7 +71,7 @@ class TaskForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        # وضعیت اولیه "در حال انجام"
+
         instance.status = 'doing'
         if commit:
             instance.save()

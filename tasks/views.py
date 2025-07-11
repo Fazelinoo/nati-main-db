@@ -7,11 +7,11 @@ def user_reports(request):
     reports = request.user.weekly_reports.select_related('project').order_by('-week_start')
     return render(request, 'tasks/user_reports.html', {'reports': reports})
 
-# صفحه لیست پروژه‌های کاربر
+
 @login_required
 def user_projects(request):
     user = request.user
-    # پروژه‌هایی که کاربر عضو تسک‌های آن است یا نقش دارد
+
     projects = Project.objects.filter(
         Q(tasks__users=user) | Q(project_roles__user=user)
     ).distinct()
@@ -21,7 +21,7 @@ def user_projects(request):
 def user_project_tasks(request, project_id):
     user = request.user
     project = get_object_or_404(Project, id=project_id)
-    # فقط تسک‌هایی که کاربر عضو آن است
+
     tasks = project.tasks.filter(users=user)
     return render(request, 'tasks/user_project_tasks.html', {'project': project, 'tasks': tasks})
 from django.shortcuts import render, redirect, get_object_or_404
@@ -43,11 +43,11 @@ def is_admin(user):
 def user_tasks(request):
     user = request.user
     user_role = getattr(user, 'role', None)
-    # پروژه‌هایی که نقش کاربر در آن‌ها وجود دارد
+
     projects_with_role = Project.objects.filter(project_roles__role=user_role).distinct() if user_role else Project.objects.none()
-    # فقط تسک‌هایی که کاربر یکی از اعضای آن‌هاست
+
     tasks = Task.objects.filter(users=user).order_by('-created_at')
-    # تسک‌های پروژه‌هایی که نقش کاربر در آن‌ها وجود دارد اما خودش عضو نیست
+   
     project_tasks = Task.objects.filter(project__in=projects_with_role).exclude(users=user)
     reports = WeeklyReport.objects.filter(user=user).order_by('-week_start')
     return render(request, 'tasks/user_tasks.html', {
@@ -102,7 +102,7 @@ from django.contrib.auth.decorators import login_required
 def project_list(request):
     user = request.user
     user_role = getattr(user, 'role', None)
-    # پروژه‌هایی که کاربر به صورت مستقیم نقش دارد یا نقش کاربر در پروژه تعریف شده
+   
     projects = Project.objects.filter(
         Q(project_roles__user=user) | Q(project_roles__role=user_role)
     ).distinct().order_by(
@@ -130,7 +130,7 @@ def project_create(request):
                 project.status = 'pending'
                 msg = 'پروژه با موفقیت ثبت شد و در انتظار تایید است.'
             project.save()
-            # ذخیره نقش‌ها بعد از ذخیره پروژه
+
             for role in form.cleaned_data['roles']:
                 from .models import ProjectRole
                 ProjectRole.objects.create(project=project, role=role)
@@ -144,7 +144,7 @@ def project_create(request):
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     tasks = project.tasks.all().order_by('-created_at')
-    # هندل تغییر وضعیت تسک از همین صفحه
+
     if request.method == 'POST':
         task_id = request.POST.get('task_id')
         task = get_object_or_404(Task, id=task_id, project=project)
@@ -178,7 +178,7 @@ def add_task_comment(request, task_id):
     return render(request, 'tasks/add_task_comment.html', {'form': form, 'task': task})
 
 def persian_to_gregorian(date_str):
-    # انتظار فرمت 1404/05/18
+
     try:
         parts = [int(x) for x in date_str.replace('-', '/').split('/')]
         if len(parts) == 3:
@@ -212,7 +212,7 @@ def add_task_to_project(request, project_id):
 @login_required
 def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    # فقط کاربرانی که نقش‌شان در ProjectRole پروژه وجود دارد و در users تسک هستند
+    
     user_roles = task.project.project_roles.values_list('role', flat=True)
     can_edit = (request.user in task.users.all()) and (getattr(request.user, 'role', None) in user_roles)
     if request.method == 'POST':
